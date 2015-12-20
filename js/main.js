@@ -1,3 +1,10 @@
+const ACTIVE = 'active';
+var activeStr = ACTIVE;
+var COLORS = ["white","red","green","yellow","orange","blue","cyan", "black","pink","purple"];
+var colorIndex = 0;
+
+var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery;
+
 
 function getDateTime(){
 	if(tizen){
@@ -6,13 +13,15 @@ function getDateTime(){
 	return new Date();
 }
 
-var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery;
-
+function addClass(el, name){
+	el.className += (' ' + name);
+}
 
 function initUI(){
 	var hours = getDateTime().getHours(),
     	ampm = (hours > 12) ? 'pm' : 'am';
-    document.querySelector('.' + ampm).className += ' active';
+	
+    addClass(document.querySelector('.' + ampm), activeStr);
 }
 
 function removeClass (el, className) {
@@ -20,26 +29,30 @@ function removeClass (el, className) {
 }
 
 function clearAll () {
-    Array.prototype.forEach.call(document.querySelectorAll('.active'), function (el) {
-        removeClass(el, 'active');
+    Array.prototype.forEach.call(document.querySelectorAll('.' + activeStr), function (el) {
+        removeClass(el, activeStr);
     });
 }
 
+function debug(msg){
+	//document.querySelector("#d").innerHTML = msg;
+}
 
 function getBatteryState(){
 	var level = Math.floor(battery.level * 100),
 		batteryE = document.querySelector('.battery');
 	
+	debug("battery: " + level);
 	batteryE.innerHTML = (level + "%");
 	if(level <= 20){
-		removeClass(batteryE, 'battery_high');
-		batteryE.className += ' battery_low';
+		removeClass(batteryE, 'active-green');
+		addClass(batteryE,'active-red');
 	}else if(level > 60){
-		removeClass(batteryE, 'battery_low');
-		batteryE.className += ' battery_high';
+		removeClass(batteryE, 'active-red');
+		addClass(batteryE,'active-green');
 	} else {
-		removeClass(batteryE, 'battery_low');
-		removeClass(batteryE, 'battery_high');
+		removeClass(batteryE, 'active-green');
+		removeClass(batteryE, 'active-red');
 	}
 }
 
@@ -65,7 +78,7 @@ function updateTime(){
 			e += "2";
 		}
     	Array.prototype.forEach.call(document.querySelectorAll('.' + e), function (el) {
-            el.className += ' active';
+            addClass(el,activeStr);
         });
     });
 }
@@ -139,14 +152,23 @@ document.addEventListener("rotarydetent", function(ev) {
    /* Get the direction value from the event */
    var direction = ev.detail.direction;
    
-   if (direction == "CW")
-   {
+   if (direction === 'CW'){
       /* Add behavior for clockwise rotation */
       console.log("clockwise");
-   }
-   else if (direction == "CCW")
-   {
+      colorIndex = colorIndex + 1;
+      if(colorIndex >= COLORS.length-1){
+    	  colorIndex = 0;
+      }
+   } else if (direction === 'CCW'){
       /* Add behavior for counter-clockwise rotation */
       console.log("counter-clockwise");
+      colorIndex = colorIndex - 1;
+      if(colorIndex < 0){
+    	  colorIndex = COLORS.length - 1;
+      }
    }
+   debug(direction + " " + colorIndex + " " + COLORS[colorIndex]);
+   clearAll();
+   activeStr = (ACTIVE + "-" + COLORS[colorIndex]);
+   updateTime();
 });
