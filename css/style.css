@@ -1,0 +1,93 @@
+* {
+    font-family: Verdana, Lucida Sans, Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0px auto;
+    background-color:#222;
+}
+
+#content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateY(-50%) translateX(-50%)
+}
+.text {
+	font-size: 24px;
+	color: #424142;
+	padding: 5px;
+}
+
+.battery{
+	position: absolute;
+	margin-top:-4px;
+	left: 0px;
+	color: #fff;
+}
+
+.battery_low {
+	color: red;
+}
+
+.battery_high {
+	color: green;
+}
+
+.active{	
+	color: #fff;
+}
+
+.active-white{
+	color: #fff;
+}
+
+.active-red{
+	color: red;
+}
+
+.active-green{
+	color: green;
+}
+
+.active-orange{
+	color: orange;
+}
+
+.active-yellow{
+	color: yellow;
+}
+
+.active-purple{
+	color: purple;
+}
+
+.active-cyan{
+	color: cyan;
+}
+
+.active-blue{
+	color: blue;
+}
+
+
+.always-active{
+	color: #fff;
+}
+
+#row1{
+	position: relative;
+	/*
+	left: 50%;
+	transform: translateX(-50%)
+	*/
+}
+
+#row8{
+	float: right;
+	/*
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%)
+	*/
+}
