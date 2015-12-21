@@ -41,7 +41,8 @@ var WorldClock = (function () {
     },
     position: {
       0: 'past',
-      1: 'to'
+      1: 'to',
+      2: ''
     },
     unit: 5
   };
@@ -55,7 +56,7 @@ var WorldClock = (function () {
   };
   
   function getDateTime(){
-	  if(tizen){
+	  if(typeof tizen !== "undefined"){
 		  return tizen.time.getCurrentDateTime();
 	  }
 	  return new Date();
@@ -73,14 +74,25 @@ var WorldClock = (function () {
 
       if (m > 30) {
         m = 60 - m;
-        position = 1;
-      } else if (m === 0) {
-        position = 0;
+        if(m){
+        	position = 1;
+        }else{
+        	position = 2;
+        }
       }
-
+      if(!m && position === -1){
+    	  position = 0;
+      }
+      
       var word = rules.minute[m];
       var pastOrTo = rules.position[position < 0 ? 0 : position];
       h = h + (position > 0 ? 1 : 0);
+      //make sure it's still less than 12
+      h = h % 12;
+      if(h === 0){
+    	  h=12;
+      }
+      
       var hourSection = rules.hour[h];
 
       if (word) {
@@ -90,6 +102,8 @@ var WorldClock = (function () {
           return hourSection + ' ' + word;
         } else if (position === 1) {
           return word + ' ' + pastOrTo + ' ' + hourSection;
+        } else if (position === 2){
+        	return hourSection + ' ' + word;
         }
       }
     }
@@ -128,7 +142,12 @@ var WorldClock = (function () {
       return getTime(hours, minutes) + ' ' + ampm;
     },
     getTimeTest: function(h,m){
-    	return getTime(h%12,m);
+    	var ampm = (h > 12) ? 'pm' : 'am';
+    	var hh = h % 12;
+    	if(hh === 0){
+    		hh = 12;
+    	}
+    	return getTime(hh,m) + ' ' + ampm;
     }
   };
 })();
