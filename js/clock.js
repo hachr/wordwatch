@@ -128,21 +128,48 @@ var WorldClock = (function () {
      */
     getTime: function (excludeAMPM) {
       var d = getDateTime();
-      var hours = d.getHours();
-      var ampm = (hours > 12) ? 'pm' : 'am';
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var ampm;
+      if(h <= 12){
+        if(h === 11 && m >= 34){ //off a bit
+          ampm = 'pm';
+        }else{
+          ampm = 'am';
+        }
+      }else{
+        if(h === 23 && m >= 34){ //off a bit
+          ampm = 'am';
+        }else{
+          ampm = 'pm';
+        }
+      }
 
-      var minutes = d.getMinutes();
-      hours = hours % 12;
-      if(hours === 0){
-    	  hours = 1;
+      var hh = h % 12;
+      if(hh === 0){
+    	  hh = 12;
       }
       if(excludeAMPM){
-        return getTime(hours, minutes);
+        return getTime(hh, m);
       }
-      return getTime(hours, minutes) + ' ' + ampm;
+      return getTime(hh, m) + ' ' + ampm;
     },
     getTimeTest: function(h,m){
-    	var ampm = (h > 12) ? 'pm' : 'am';
+      var ampm;
+      if(h <= 12){
+        if(h === 11 && m >= 34){ //off a bit
+          ampm = 'pm';
+        }else{
+          ampm = 'am';
+        }
+      }else{
+        if(h === 23 && m >= 34){ //off a bit
+          ampm = 'am';
+        }else{
+          ampm = 'pm';
+        }
+      }
+    	
     	var hh = h % 12;
     	if(hh === 0){
     		hh = 12;
