@@ -41,7 +41,8 @@ var WorldClock = (function () {
     },
     position: {
       0: 'past',
-      1: 'to'
+      1: 'to',
+      2: ''
     },
     unit: 5
   };
@@ -55,7 +56,7 @@ var WorldClock = (function () {
   };
   
   function getDateTime(){
-	  if(tizen){
+	  if(typeof tizen !== "undefined"){
 		  return tizen.time.getCurrentDateTime();
 	  }
 	  return new Date();
@@ -73,14 +74,25 @@ var WorldClock = (function () {
 
       if (m > 30) {
         m = 60 - m;
-        position = 1;
-      } else if (m === 0) {
-        position = 0;
+        if(m){
+        	position = 1;
+        }else{
+        	position = 2;
+        }
       }
-
+      if(!m && position === -1){
+    	  position = 0;
+      }
+      
       var word = rules.minute[m];
       var pastOrTo = rules.position[position < 0 ? 0 : position];
       h = h + (position > 0 ? 1 : 0);
+      //make sure it's still less than 12
+      h = h % 12;
+      if(h === 0){
+    	  h=12;
+      }
+      
       var hourSection = rules.hour[h];
 
       if (word) {
@@ -90,6 +102,8 @@ var WorldClock = (function () {
           return hourSection + ' ' + word;
         } else if (position === 1) {
           return word + ' ' + pastOrTo + ' ' + hourSection;
+        } else if (position === 2){
+        	return hourSection + ' ' + word;
         }
       }
     }
@@ -114,21 +128,53 @@ var WorldClock = (function () {
      */
     getTime: function (excludeAMPM) {
       var d = getDateTime();
-      var hours = d.getHours();
-      var ampm = (hours > 12) ? 'pm' : 'am';
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var ampm;
+      if(h <= 12){
+        if(h === 11 && m >= 34){ //off a bit
+          ampm = 'pm';
+        }else{
+          ampm = 'am';
+        }
+      }else{
+        if(h === 23 && m >= 34){ //off a bit
+          ampm = 'am';
+        }else{
+          ampm = 'pm';
+        }
+      }
 
-      var minutes = d.getMinutes();
-      hours = hours % 12;
-      if(hours === 0){
-    	  hours = 1;
+      var hh = h % 12;
+      if(hh === 0){
+    	  hh = 12;
       }
       if(excludeAMPM){
-        return getTime(hours, minutes);
+        return getTime(hh, m);
       }
-      return getTime(hours, minutes) + ' ' + ampm;
+      return getTime(hh, m) + ' ' + ampm;
     },
     getTimeTest: function(h,m){
-    	return getTime(h%12,m);
+      var ampm;
+      if(h <= 12){
+        if(h === 11 && m >= 34){ //off a bit
+          ampm = 'pm';
+        }else{
+          ampm = 'am';
+        }
+      }else{
+        if(h === 23 && m >= 34){ //off a bit
+          ampm = 'am';
+        }else{
+          ampm = 'pm';
+        }
+      }
+    	
+    	var hh = h % 12;
+    	if(hh === 0){
+    		hh = 12;
+    	}
+    	return getTime(hh,m) + ' ' + ampm;
     }
   };
 })();
