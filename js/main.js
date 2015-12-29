@@ -2,6 +2,7 @@ const ACTIVE = 'active';
 var activeStr = ACTIVE;
 var COLORS = ["white","red","green","yellow","orange","blue","cyan", "black","pink","purple"];
 var colorIndex = 0;
+var itis = null;
 
 var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || {level:0.6, addEventListener: function(){}};
 
@@ -47,11 +48,11 @@ function getBatteryState(){
 	
 	batteryE.innerHTML = (level + "%");
 	if(level <= 20){
-		removeClass(batteryE, 'active-green');
-		addClass(batteryE,'active-red');
+		removeClass(batteryE, 'battery_high');
+		addClass(batteryE,'battery_low');
 	}else {
-		removeClass(batteryE, 'active-red');
-		addClass(batteryE,'active-green');	
+		removeClass(batteryE, 'battery_low');
+		addClass(batteryE,'battery_high');	
 	}
 	debug("battery: " + batteryE.className);
 }
@@ -60,6 +61,12 @@ function getBatteryState(){
  * 
  */
 function updateTime(){
+    //add active class to itis
+    if(!itis){        
+        itis = document.querySelector('.itis');
+    }
+    addClass(itis, activeStr);
+    
 	var ret = WorldClock.getTime(),
 		arr = ret.split(' ');
 	debug(ret);
