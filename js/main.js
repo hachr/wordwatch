@@ -3,18 +3,20 @@ var activeStr = ACTIVE;
 var COLORS = ["white","red","green","yellow","orange","blue","cyan", "black","pink","purple"];
 var colorIndex = 0;
 
-var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery;
+var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || {level:0.6, addEventListener: function(){}};
 
 
 function getDateTime(){
-	if(tizen){
+	if(typeof tizen !== "undefined"){
 		return tizen.time.getCurrentDateTime();
 	}
 	return new Date();
 }
 
 function addClass(el, name){
-	el.className += (' ' + name);
+	if(el.className.indexOf(name) === -1){
+		el.className += (' ' + name);
+	}
 }
 
 function initUI(){
@@ -42,18 +44,16 @@ function getBatteryState(){
 	var level = Math.floor(battery.level * 100),
 		batteryE = document.querySelector('.battery');
 	
-	debug("battery: " + level);
+	
 	batteryE.innerHTML = (level + "%");
 	if(level <= 20){
 		removeClass(batteryE, 'active-green');
 		addClass(batteryE,'active-red');
-	}else if(level > 60){
+	}else {
 		removeClass(batteryE, 'active-red');
-		addClass(batteryE,'active-green');
-	} else {
-		removeClass(batteryE, 'active-green');
-		removeClass(batteryE, 'active-red');
+		addClass(batteryE,'active-green');	
 	}
+	debug("battery: " + batteryE.className);
 }
 
 /**
@@ -62,6 +62,7 @@ function getBatteryState(){
 function updateTime(){
 	var ret = WorldClock.getTime(),
 		arr = ret.split(' ');
+	debug(ret);
 	if((arr[0] === "ten" || arr[0] === "five")){
 		if(arr.length < 3){
 			arr[0] += "2"; //hour
@@ -85,10 +86,12 @@ function updateTime(){
 
 
 function initEvents(){
+	if(battery){
 	//battery.addEventListener('chargingchange', getBatteryState);
     //battery.addEventListener('chargingtimechange', getBatteryState);
     //battery.addEventListener('dischargingtimechange', getBatteryState);
     battery.addEventListener('levelchange', getBatteryState);
+	}
 }
 
 window.onload = function () {
@@ -167,7 +170,7 @@ document.addEventListener("rotarydetent", function(ev) {
     	  colorIndex = COLORS.length - 1;
       }
    }
-   debug(direction + " " + colorIndex + " " + COLORS[colorIndex]);
+   //debug(direction + " " + colorIndex + " " + COLORS[colorIndex]);
    clearAll();
    activeStr = (ACTIVE + "-" + COLORS[colorIndex]);
    updateTime();
