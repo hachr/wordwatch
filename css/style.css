@@ -4,7 +4,7 @@
 
 body {
     margin: 0px auto;
-    background-color:#222;
+    background-color:#000;
 }
 
 #content {
@@ -15,7 +15,7 @@ body {
 }
 .text {
 	font-size: 24px;
-	color: #424142;
+	color: #303030;
 	padding: 5px;
 }
 
@@ -29,6 +29,9 @@ body {
 
 .battery_low {
 	color: red;
+}
+.battery_normal{
+	color: orange;	
 }
 
 .battery_high {
@@ -45,6 +48,10 @@ body {
 
 .active-red{
 	color: red;
+}
+
+.active-gray {
+	color: gray;
 }
 
 .active-green{
@@ -71,8 +78,16 @@ body {
 	color: blue;
 }
 
-.active-black{
-	color: black;
+.active-teal{
+	color: teal;
+}
+
+.active-fuchsia{
+	color: fuchsia;
+}
+
+.active-maroon {
+	color:maroon;
 }
 
 .active-pink{

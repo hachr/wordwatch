@@ -1,6 +1,6 @@
 const ACTIVE = 'active';
 var activeStr = ACTIVE;
-var COLORS = ["white","red","green","yellow","orange","blue","cyan", "black","pink","purple"];
+var COLORS = ["white", "gray", "red", "maroon", "fuchsia", "teal", "green","yellow", "orange","blue","cyan","pink","purple"];
 var colorIndex = 0;
 var itis = null;
 
@@ -49,9 +49,15 @@ function getBatteryState(){
 	batteryE.innerHTML = (level + "%");
 	if(level <= 20){
 		removeClass(batteryE, 'battery_high');
+		removeClass(batteryE, 'battery_normal');
 		addClass(batteryE,'battery_low');
+	}else if(level > 20 && level < 69){
+		removeClass(batteryE, 'battery_high');
+		removeClass(batteryE, 'battery_low');
+		addClass(batteryE,'battery_normal');
 	}else {
 		removeClass(batteryE, 'battery_low');
+		removeClass(batteryE, 'battery_normal');
 		addClass(batteryE,'battery_high');	
 	}
 	debug("battery: " + batteryE.className);
@@ -106,6 +112,7 @@ window.onload = function () {
     document.addEventListener('tizenhwkey', function (e) {
         if (e.keyName === 'back'){
             try {
+            	tizen.power.unsetScreenStateChangeListener();
             	tizen.power.release("SCREEN");
                 tizen.application.getCurrentApplication().exit();
             } catch (ignore) {
@@ -114,7 +121,16 @@ window.onload = function () {
     });
 
     if(typeof tizen !== 'undefined'){
+    	//https://developer.tizen.org/dev-guide/2.3.0/org.tizen.web.apireference/html/device_api/mobile/tizen/power.html#PowerScreenState
     	tizen.power.request("SCREEN", "SCREEN_NORMAL");
+    	tizen.power.setScreenBrightness(0.05);
+    	/*
+    	tizen.power.setScreenStateChangeListener(function(p,n){
+    		if(n === "SCREEN_OFF"){
+    			tizen.power.turnScreenOn();
+    		}
+    	});
+    	*/
     }
 
     initEvents();
